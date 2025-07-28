@@ -50,13 +50,16 @@ export default api;
 
 // Update the createTrip and updateTrip functions to handle coordinates
 // Update the createTrip function at the bottom of the file
+// Update the createTrip and updateTrip functions to handle cover images
 const createTrip = async (tripData) => {
   const response = await api.post('/trips', {
     ...tripData,
     latitude: tripData.coordinates?.lat || null,
     longitude: tripData.coordinates?.lng || null,
     country: tripData.country || null,
-    country_code: tripData.countryCode || null
+    country_code: tripData.countryCode || null,
+    cover_image: tripData.cover_image || null,
+    cover_image_path: tripData.cover_image_path || null
   });
   return response.data;
 };
@@ -67,7 +70,9 @@ const updateTrip = async (id, tripData) => {
     latitude: tripData.coordinates?.lat || null,
     longitude: tripData.coordinates?.lng || null,
     country: tripData.country || null,
-    country_code: tripData.countryCode || null
+    country_code: tripData.countryCode || null,
+    cover_image: tripData.cover_image || null,
+    cover_image_path: tripData.cover_image_path || null
   });
   return response.data;
 };
