@@ -1,11 +1,19 @@
-import { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Button, Spinner, Badge } from 'react-bootstrap';
-import { useAuth } from '../../contexts/AuthContext';
-import { tripAPI, userAPI } from '../../services/api';
-import Navbar from '../UI/Navbar';
-import TripCard from '../Trips/TripCard';
-import TripModal from '../Trips/TripModal';
-import { MapView } from '../Maps';
+import { useState, useEffect } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Button,
+  Spinner,
+  Badge,
+} from "react-bootstrap";
+import { useAuth } from "../../contexts/AuthContext";
+import { tripAPI, userAPI } from "../../services/api";
+import Navbar from "../UI/Navbar";
+import TripCard from "../Trips/TripCard";
+import TripModal from "../Trips/TripModal";
+import { MapView } from "../Maps";
 
 const Dashboard = () => {
   const { currentUser, logout } = useAuth();
@@ -24,13 +32,13 @@ const Dashboard = () => {
       setLoading(true);
       const [tripsResponse, statsResponse] = await Promise.all([
         tripAPI.getTrips(),
-        userAPI.getStats()
+        userAPI.getStats(),
       ]);
-      
+
       setTrips(tripsResponse.data);
       setStats(statsResponse.data);
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      console.error("Error fetching dashboard data:", error);
     } finally {
       setLoading(false);
     }
@@ -39,98 +47,105 @@ const Dashboard = () => {
   // Add function to group and sort trips
   // Update the getGroupedTrips function with smart date-based status detection
   const getGroupedTrips = () => {
-  // Debug: Log all trips and their statuses
-  console.log('All trips:', trips);
-  console.log('Trip statuses:', trips.map(trip => ({ id: trip.id, status: trip.status, title: trip.title })));
-  
-  const sortByDate = (a, b) => {
-    const dateA = new Date(a.start_date || a.created_at);
-    const dateB = new Date(b.start_date || b.created_at);
-    return dateA - dateB; // FIXED: Earliest date first (chronological order)
-  };
-  
-  // Smart status detection based on dates
-  const getSmartStatus = (trip) => {
-    // If trip has explicit status, use it
-    if (trip.status && trip.status !== 'undefined') {
-      return trip.status;
-    }
-    
-    // Smart detection based on dates
-    const now = new Date();
-    const startDate = trip.start_date ? new Date(trip.start_date) : null;
-    const endDate = trip.end_date ? new Date(trip.end_date) : null;
-    
-    if (startDate && endDate) {
-      if (now < startDate) {
-        return 'planned';
-      } else if (now >= startDate && now <= endDate) {
-        return 'ongoing';
-      } else if (now > endDate) {
-        return 'completed';
+    // Debug: Log all trips and their statuses
+    console.log("All trips:", trips);
+    console.log(
+      "Trip statuses:",
+      trips.map((trip) => ({
+        id: trip.id,
+        status: trip.status,
+        title: trip.title,
+      }))
+    );
+
+    const sortByDate = (a, b) => {
+      const dateA = new Date(a.start_date || a.created_at);
+      const dateB = new Date(b.start_date || b.created_at);
+      return dateA - dateB; // FIXED: Earliest date first (chronological order)
+    };
+
+    // Smart status detection based on dates
+    const getSmartStatus = (trip) => {
+      // If trip has explicit status, use it
+      if (trip.status && trip.status !== "undefined") {
+        return trip.status;
       }
-    } else if (startDate) {
-      if (now < startDate) {
-        return 'planned';
+
+      // Smart detection based on dates
+      const now = new Date();
+      const startDate = trip.start_date ? new Date(trip.start_date) : null;
+      const endDate = trip.end_date ? new Date(trip.end_date) : null;
+
+      if (startDate && endDate) {
+        if (now < startDate) {
+          return "planned";
+        } else if (now >= startDate && now <= endDate) {
+          return "ongoing";
+        } else if (now > endDate) {
+          return "completed";
+        }
+      } else if (startDate) {
+        if (now < startDate) {
+          return "planned";
+        } else {
+          // If only start date and it's past, assume completed
+          return "completed";
+        }
+      }
+
+      // Default to planned if no dates available
+      return "planned";
+    };
+
+    // Group trips using smart status detection
+    const groupedTrips = {
+      planned: [],
+      ongoing: [],
+      completed: [],
+    };
+
+    trips.forEach((trip) => {
+      const smartStatus = getSmartStatus(trip);
+      if (groupedTrips[smartStatus]) {
+        groupedTrips[smartStatus].push(trip);
       } else {
-        // If only start date and it's past, assume completed
-        return 'completed';
+        // Fallback for any unexpected status
+        groupedTrips.planned.push(trip);
       }
-    }
-    
-    // Default to planned if no dates available
-    return 'planned';
+    });
+
+    // Sort each group by date
+    Object.keys(groupedTrips).forEach((status) => {
+      groupedTrips[status].sort(sortByDate);
+    });
+
+    // Debug: Log grouped results
+    console.log("Grouped trips:", groupedTrips);
+
+    return groupedTrips;
   };
-  
-  // Group trips using smart status detection
-  const groupedTrips = {
-    planned: [],
-    ongoing: [],
-    completed: []
-  };
-  
-  trips.forEach(trip => {
-    const smartStatus = getSmartStatus(trip);
-    if (groupedTrips[smartStatus]) {
-      groupedTrips[smartStatus].push(trip);
-    } else {
-      // Fallback for any unexpected status
-      groupedTrips.planned.push(trip);
-    }
-  });
-  
-  // Sort each group by date
-  Object.keys(groupedTrips).forEach(status => {
-    groupedTrips[status].sort(sortByDate);
-  });
-  
-  // Debug: Log grouped results
-  console.log('Grouped trips:', groupedTrips);
-  
-  return groupedTrips;
-};
 
   // Add function to get status display info
   const getStatusInfo = (status) => {
     const statusConfig = {
       planned: {
-        title: '📅 Planned Trips',
-        variant: 'primary',
-        icon: 'bi-calendar-plus',
-        description: 'Upcoming adventures'
+        title: "📅 Planned Trips",
+        variant: "primary",
+        icon: "bi-calendar-plus",
+        description: "Upcoming adventures",
       },
       ongoing: {
-        title: '✈️ Ongoing Trips',
-        variant: 'success',
-        icon: 'bi-airplane',
-        description: 'Currently traveling'
+        title: "✈️ Ongoing Trips",
+        variant: "success",
+        icon: "bi-airplane",
+        description: "Currently traveling",
       },
       completed: {
-        title: '✅ Completed Trips',
-        variant: 'secondary',
-        icon: 'bi-check-circle',
-        description: 'Memories made'
-      }
+        title: "✅ Completed Trips",
+        variant: "secondary",
+        icon: "bi-check-circle",
+        description: "Memories made",
+      },
     };
     return statusConfig[status] || statusConfig.planned;
   };
@@ -152,7 +167,10 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
+      <Container
+        className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: "100vh" }}
+      >
         <Spinner animation="border" role="status">
           <span className="visually-hidden">Loading...</span>
         </Spinner>
@@ -192,7 +210,9 @@ const Dashboard = () => {
             <Col md={4}>
               <Card className="text-center">
                 <Card.Body>
-                  <h3 className="text-success">{stats.countries_visited || 0}</h3>
+                  <h3 className="text-success">
+                    {stats.countries_visited || 0}
+                  </h3>
                   <p className="mb-0">Countries Visited</p>
                 </Card.Body>
               </Card>
@@ -219,7 +239,7 @@ const Dashboard = () => {
                 </h5>
               </Card.Header>
               <Card.Body>
-                <MapView 
+                <MapView
                   trips={trips}
                   height="350px"
                   zoom={2}
@@ -236,7 +256,9 @@ const Dashboard = () => {
             <Card.Body>
               <i className="bi bi-map display-1 text-muted"></i>
               <h4 className="mt-3">No trips yet!</h4>
-              <p className="text-muted">Start documenting your adventures by creating your first trip.</p>
+              <p className="text-muted">
+                Start documenting your adventures by creating your first trip.
+              </p>
               <Button variant="primary" onClick={handleCreateTrip}>
                 Create Your First Trip
               </Button>
@@ -247,9 +269,9 @@ const Dashboard = () => {
             {/* Render each status group */}
             {Object.entries(groupedTrips).map(([status, statusTrips]) => {
               if (statusTrips.length === 0) return null;
-              
+
               const statusInfo = getStatusInfo(status);
-              
+
               return (
                 <div key={status} className="mb-5">
                   {/* Status Section Header */}
@@ -259,7 +281,8 @@ const Dashboard = () => {
                         <div className="d-flex align-items-center">
                           <h4 className="mb-0 me-3">{statusInfo.title}</h4>
                           <Badge bg={statusInfo.variant} className="fs-6">
-                            {statusTrips.length} {statusTrips.length === 1 ? 'trip' : 'trips'}
+                            {statusTrips.length}{" "}
+                            {statusTrips.length === 1 ? "trip" : "trips"}
                           </Badge>
                         </div>
                         <small className="text-muted">
@@ -270,13 +293,13 @@ const Dashboard = () => {
                       <hr className="mt-2" />
                     </Col>
                   </Row>
-                  
+
                   {/* Status Trips Grid */}
                   <Row>
-                    {statusTrips.map(trip => (
+                    {statusTrips.map((trip) => (
                       <Col md={6} lg={4} key={trip.id} className="mb-4">
-                        <TripCard 
-                          trip={trip} 
+                        <TripCard
+                          trip={trip}
                           onEdit={() => handleEditTrip(trip)}
                           onRefresh={fetchDashboardData}
                         />
@@ -286,41 +309,43 @@ const Dashboard = () => {
                 </div>
               );
             })}
-            
+
             {/* Fallback: Show ungrouped trips if none match the status filters */}
-            {Object.values(groupedTrips).every(group => group.length === 0) && trips.length > 0 && (
-              <div className="mb-5">
-                <Row className="mb-3">
-                  <Col>
-                    <div className="d-flex align-items-center justify-content-between">
-                      <div className="d-flex align-items-center">
-                        <h4 className="mb-0 me-3">📋 All Trips</h4>
-                        <Badge bg="info" className="fs-6">
-                          {trips.length} {trips.length === 1 ? 'trip' : 'trips'}
-                        </Badge>
+            {Object.values(groupedTrips).every((group) => group.length === 0) &&
+              trips.length > 0 && (
+                <div className="mb-5">
+                  <Row className="mb-3">
+                    <Col>
+                      <div className="d-flex align-items-center justify-content-between">
+                        <div className="d-flex align-items-center">
+                          <h4 className="mb-0 me-3">📋 All Trips</h4>
+                          <Badge bg="info" className="fs-6">
+                            {trips.length}{" "}
+                            {trips.length === 1 ? "trip" : "trips"}
+                          </Badge>
+                        </div>
+                        <small className="text-muted">
+                          <i className="bi bi-list me-1"></i>
+                          Unsorted trips
+                        </small>
                       </div>
-                      <small className="text-muted">
-                        <i className="bi bi-list me-1"></i>
-                        Unsorted trips
-                      </small>
-                    </div>
-                    <hr className="mt-2" />
-                  </Col>
-                </Row>
-                
-                <Row>
-                  {trips.map(trip => (
-                    <Col md={6} lg={4} key={trip.id} className="mb-4">
-                      <TripCard 
-                        trip={trip} 
-                        onEdit={() => handleEditTrip(trip)}
-                        onRefresh={fetchDashboardData}
-                      />
+                      <hr className="mt-2" />
                     </Col>
-                  ))}
-                </Row>
-              </div>
-            )}
+                  </Row>
+
+                  <Row>
+                    {trips.map((trip) => (
+                      <Col md={6} lg={4} key={trip.id} className="mb-4">
+                        <TripCard
+                          trip={trip}
+                          onEdit={() => handleEditTrip(trip)}
+                          onRefresh={fetchDashboardData}
+                        />
+                      </Col>
+                    ))}
+                  </Row>
+                </div>
+              )}
           </>
         )}
       </Container>
