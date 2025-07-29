@@ -4,9 +4,19 @@ import { Spinner, Alert } from "react-bootstrap";
 import useGoogleMaps from "../../hooks/useGoogleMaps";
 
 // Add back the missing constants
+const getResponsiveMapHeight = () => {
+  if (typeof window !== 'undefined') {
+    if (window.innerWidth < 576) return "200px";  // Small phones
+    if (window.innerWidth < 768) return "250px";  // Large phones
+    if (window.innerWidth < 1024) return "300px"; // Tablets
+    return "400px"; // Desktop
+  }
+  return "400px"; // Default fallback
+};
+
 const containerStyle = {
   width: "100%",
-  height: "400px",
+  height: getResponsiveMapHeight(),
   borderRadius: "8px",
 };
 

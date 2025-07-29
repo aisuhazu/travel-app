@@ -22,6 +22,15 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [showTripModal, setShowTripModal] = useState(false);
   const [selectedTrip, setSelectedTrip] = useState(null);
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 1200
+  );
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     fetchDashboardData();
@@ -35,7 +44,7 @@ const Dashboard = () => {
         userAPI.getStats(),
       ]);
 
-      console.log('Fetched trips:', tripsResponse.data); // Add this debug line
+      console.log("Fetched trips:", tripsResponse.data); // Add this debug line
       setTrips(tripsResponse.data);
       setStats(statsResponse.data);
     } catch (error) {
@@ -50,16 +59,16 @@ const Dashboard = () => {
     const groupedTrips = getGroupedTrips();
     const ongoingAndCompletedTrips = [
       ...groupedTrips.ongoing,
-      ...groupedTrips.completed
+      ...groupedTrips.completed,
     ];
-    
+
     const uniqueCountries = new Set();
-    ongoingAndCompletedTrips.forEach(trip => {
+    ongoingAndCompletedTrips.forEach((trip) => {
       if (trip.country) {
         uniqueCountries.add(trip.country);
       }
     });
-    
+
     return uniqueCountries.size;
   };
 
@@ -181,7 +190,8 @@ const Dashboard = () => {
 
   const handleTripSaved = () => {
     setShowTripModal(false);
-    fetchDashboardData();
+    // Reload the page to reset all component states
+    window.location.reload();
   };
 
   if (loading) {
@@ -205,9 +215,9 @@ const Dashboard = () => {
       <Container className="mt-4">
         <Row className="mb-4">
           <Col>
-            <div className="d-flex justify-content-between align-items-center">
-              <h1>🗺️ My Travel Dashboard</h1>
-              <Button variant="primary" onClick={handleCreateTrip}>
+            <div className="d-flex justify-content-between align-items-center mb-4 dashboard-header">
+              <h1>🗺️ Travel Dashboard</h1>
+              <Button variant="primary" onClick={() => setShowTripModal(true)}>
                 <i className="bi bi-plus-circle me-2"></i>
                 Add New Trip
               </Button>
@@ -260,7 +270,13 @@ const Dashboard = () => {
               <Card.Body>
                 <MapView
                   trips={trips}
-                  height="350px"
+                  height={
+                    windowWidth < 768
+                      ? "250px"
+                      : windowWidth < 1024
+                      ? "300px"
+                      : "350px"
+                  }
                   zoom={2}
                   center={{ lat: 20, lng: 0 }}
                 />
@@ -371,9 +387,10 @@ const Dashboard = () => {
 
       {/* Trip Modal */}
       <TripModal
+        key={selectedTrip ? selectedTrip.id : 'new'}
         show={showTripModal}
-        onHide={() => setShowTripModal(false)}
         trip={selectedTrip}
+        onHide={() => setShowTripModal(false)}
         onSave={handleTripSaved}
       />
     </>

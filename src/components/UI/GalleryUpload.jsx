@@ -153,26 +153,43 @@ const GalleryUpload = ({ tripId, userId, existingImages = [], onImagesChange, ma
                       src={image.url}
                       alt={`Gallery ${index + 1}`}
                       className="img-fluid rounded"
-                      style={{ aspectRatio: '1', objectFit: 'cover', width: '100%' }}
+                      style={{ 
+                        aspectRatio: '1', 
+                        objectFit: 'cover', 
+                        width: '100%'
+                      }}
                       onError={(e) => {
                         console.error('Image failed to load:', image.url);
                         e.target.style.display = 'none';
                         // Show error placeholder
-                        e.target.nextSibling.style.display = 'flex';
+                        const errorDiv = e.target.parentElement.querySelector('.error-placeholder');
+                        if (errorDiv) {
+                          errorDiv.style.display = 'flex';
+                          errorDiv.style.setProperty('display', 'flex', 'important');
+                        }
                       }}
-                      onLoad={() => {
+                      onLoad={(e) => {
                         console.log('Image loaded successfully:', image.url);
+                        // Hide error placeholder
+                        const errorDiv = e.target.parentElement.querySelector('.error-placeholder');
+                        if (errorDiv) {
+                          errorDiv.style.setProperty('display', 'none', 'important');
+                        }
                       }}
                     />
                     {/* Error placeholder */}
                     <div 
-                      className="d-flex align-items-center justify-content-center bg-light rounded"
+                      className="error-placeholder align-items-center justify-content-center bg-light rounded"
                       style={{ 
                         aspectRatio: '1', 
                         width: '100%', 
-                        display: 'none',
+                        display: 'none !important', // Use !important to override Bootstrap
                         fontSize: '0.8rem',
-                        color: '#666'
+                        color: '#666',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        zIndex: 1
                       }}
                     >
                       <div className="text-center">
@@ -180,21 +197,17 @@ const GalleryUpload = ({ tripId, userId, existingImages = [], onImagesChange, ma
                         Failed to load
                       </div>
                     </div>
+                    
+                    {/* Delete button */}
                     <Button
                       variant="danger"
                       size="sm"
                       className="position-absolute top-0 end-0 m-1"
                       onClick={() => removeImage(index)}
-                      style={{ fontSize: '0.75rem' }}
+                      style={{ zIndex: 2 }}
                     >
                       <i className="bi bi-x"></i>
                     </Button>
-                    <Badge 
-                      bg="dark" 
-                      className="position-absolute bottom-0 start-0 m-1"
-                    >
-                      {index + 1}
-                    </Badge>
                   </div>
                 </Col>
               ))}

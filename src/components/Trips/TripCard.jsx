@@ -214,7 +214,7 @@ const TripCard = ({ trip, onEdit, onRefresh }) => {
                 Location
               </small>
               <div style={{ height: '250px', borderRadius: '8px', overflow: 'hidden' }}>
-                <TripMap 
+                <TripMap
                   trip={trip}
                   height="250px"
                 />
@@ -275,20 +275,11 @@ const TripCard = ({ trip, onEdit, onRefresh }) => {
       {/* Lightbox Modal */}
       <ImageLightbox
         show={showLightbox}
-        onHide={() => setShowLightbox(false)}
         images={galleryImages}
+        onHide={() => setShowLightbox(false)}
         initialIndex={lightboxIndex}
         tripTitle={trip.title}
       />
-
-      <style jsx>{`
-        .trip-card {
-          transition: transform 0.2s ease-in-out;
-        }
-        .trip-card:hover {
-          transform: translateY(-2px);
-        }
-      `}</style>
     </>
   );
 };

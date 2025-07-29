@@ -63,3 +63,216 @@
     border-radius: 4px;
   }
 }
+
+/* Enhanced Mobile Breakpoints */
+/* Small phones (up to 576px) */
+@media (max-width: 576px) {
+  .trip-card img {
+    height: 150px !important;
+  }
+  
+  .stats-card h3 {
+    font-size: 1.5rem;
+  }
+  
+  .container {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  
+  .btn {
+    min-height: 44px;
+    padding: 12px 16px;
+  }
+  
+  .card-body {
+    padding: 1rem 0.75rem;
+  }
+}
+
+/* Tablets (768px to 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .map-container {
+    height: 300px;
+  }
+  
+  .trip-card img {
+    height: 180px;
+  }
+  
+  .modal-dialog {
+    max-width: 90%;
+  }
+}
+
+/* Large tablets and small desktops */
+@media (min-width: 1025px) and (max-width: 1200px) {
+  .trip-card img {
+    height: 200px;
+  }
+}
+
+/* Quick mobile header fix - Target only dashboard header */
+@media (max-width: 576px) {
+  .dashboard-header.d-flex.justify-content-between {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .dashboard-header.d-flex.justify-content-between h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0;
+  }
+  
+  .dashboard-header.d-flex.justify-content-between .btn {
+    width: auto;
+    min-width: 200px;
+    max-width: 280px;
+    margin: 0 auto;
+    display: block;
+  }
+}
+
+/* Mobile Map Optimizations */
+@media (max-width: 576px) {
+  /* Trip Card Maps */
+  .trip-card .map-container,
+  .trip-card [style*="height: 250px"] {
+    height: 180px !important;
+    border-radius: 6px;
+  }
+  
+  /* Dashboard Overview Map */
+  .card .map-container {
+    height: 200px !important;
+  }
+  
+  /* Map Controls */
+  .gm-style .gm-style-cc {
+    display: none !important; /* Hide copyright on mobile */
+  }
+  
+  .gm-style .gm-bundled-control {
+    margin: 5px !important;
+  }
+  
+  /* Zoom controls */
+  .gm-style .gm-bundled-control .gm-bundled-control-inner {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  
+  /* Map fullscreen button */
+  .gm-style .gm-fullscreen-control {
+    right: 5px !important;
+    top: 5px !important;
+  }
+  
+  /* Location header in trip cards */
+  .trip-card small.text-muted {
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Large phones (577px - 767px) */
+@media (min-width: 577px) and (max-width: 767px) {
+  .trip-card .map-container,
+  .trip-card [style*="height: 250px"] {
+    height: 220px !important;
+  }
+  
+  .card .map-container {
+    height: 250px !important;
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .trip-card .map-container,
+  .trip-card [style*="height: 250px"] {
+    height: 240px !important;
+  }
+}
+
+/* General map improvements */
+.map-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Map loading state */
+.map-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, #f8f9fa 25%, transparent 25%), 
+              linear-gradient(-45deg, #f8f9fa 25%, transparent 25%), 
+              linear-gradient(45deg, transparent 75%, #f8f9fa 75%), 
+              linear-gradient(-45deg, transparent 75%, #f8f9fa 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  z-index: -1;
+}
+
+/* Trip Status Headers Mobile Optimization */
+@media (max-width: 576px) {
+  /* Status section headers */
+  .d-flex.align-items-center.justify-content-between {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem;
+  }
+  
+  /* Status title and badge container */
+  .d-flex.align-items-center h4 {
+    font-size: 1.25rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  /* Status badge styling */
+  .d-flex.align-items-center .badge {
+    font-size: 0.75rem !important;
+    padding: 0.4rem 0.8rem !important;
+    margin-left: 0 !important;
+    margin-top: 0.25rem;
+  }
+  
+  /* Status description */
+  .d-flex.align-items-center + .text-muted,
+  .d-flex.justify-content-between .text-muted {
+    font-size: 0.85rem !important;
+    margin-top: 0.5rem;
+    align-self: flex-start !important;
+  }
+  
+  /* Improve spacing for status sections */
+  .mb-5 {
+    margin-bottom: 2rem !important;
+  }
+  
+  /* Status section divider */
+  .mb-5 hr {
+    margin-top: 1rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+}
+
+/* Tablet optimization */
+@media (min-width: 577px) and (max-width: 768px) {
+  .d-flex.align-items-center h4 {
+    font-size: 1.35rem;
+  }
+  
+  .d-flex.align-items-center .badge {
+    font-size: 0.8rem;
+    padding: 0.45rem 0.9rem;
+  }
+}

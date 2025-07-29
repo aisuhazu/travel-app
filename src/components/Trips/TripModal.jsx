@@ -96,7 +96,7 @@ const TripModal = ({ show, onHide, trip, onSave }) => {
         budget: trip.budget || "",
         cover_image: trip.cover_image || "",
         cover_image_path: trip.cover_image_path || "",
-        gallery_images: trip.gallery_images || [] // Add this line
+        gallery_images: trip.gallery_images || []
       });
     } else {
       setFormData({
@@ -110,7 +110,7 @@ const TripModal = ({ show, onHide, trip, onSave }) => {
         budget: "",
         cover_image: "",
         cover_image_path: "",
-        gallery_images: [] // Add this line
+        gallery_images: []
       });
     }
     setError("");
