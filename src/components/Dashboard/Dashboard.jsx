@@ -35,6 +35,7 @@ const Dashboard = () => {
         userAPI.getStats(),
       ]);
 
+      console.log('Fetched trips:', tripsResponse.data); // Add this debug line
       setTrips(tripsResponse.data);
       setStats(statsResponse.data);
     } catch (error) {

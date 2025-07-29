@@ -96,7 +96,54 @@ const TripCard = ({ trip, onEdit, onRefresh }) => {
           </Card.Text>
         )}
 
-        {/* Add map after description */}
+        {/* Improved gallery preview with larger images */}
+        {trip.gallery_images && trip.gallery_images.length > 0 && (
+          <div className="mb-3">
+            <small className="text-muted d-block mb-2">
+              <i className="bi bi-images me-1"></i>
+              {trip.gallery_images.length} photo{trip.gallery_images.length !== 1 ? 's' : ''}
+            </small>
+            <div className="d-flex gap-2" style={{ maxHeight: "100px", overflow: "hidden" }}>
+              {trip.gallery_images.slice(0, 3).map((image, index) => (
+                <img
+                  key={index}
+                  src={image.url}
+                  alt={`Gallery ${index + 1}`}
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    objectFit: "cover",
+                    borderRadius: "8px",
+                    border: "2px solid #dee2e6",
+                    cursor: "pointer",
+                    transition: "transform 0.2s ease"
+                  }}
+                  onMouseEnter={(e) => e.target.style.transform = "scale(1.05)"}
+                  onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
+                />              
+              ))}
+              {trip.gallery_images.length > 3 && (
+                <div
+                  className="d-flex align-items-center justify-content-center text-muted"
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    backgroundColor: "#f8f9fa",
+                    borderRadius: "8px",
+                    border: "2px solid #dee2e6",
+                    fontSize: "14px",
+                    fontWeight: "bold",
+                    cursor: "pointer"
+                  }}
+                >
+                  +{trip.gallery_images.length - 3}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Add map after gallery */}
         <div className="mt-3">
           <TripMap trip={trip} height="200px" />
         </div>

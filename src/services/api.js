@@ -32,8 +32,32 @@ export const userAPI = {
 export const tripAPI = {
   getTrips: (params) => api.get("/trips", { params }),
   getTrip: (id) => api.get(`/trips/${id}`),
-  createTrip: (data) => api.post("/trips", data),
-  updateTrip: (id, data) => api.put(`/trips/${id}`, data),
+  createTrip: async (tripData) => {
+    const response = await api.post('/trips', {
+      ...tripData,
+      latitude: tripData.coordinates?.lat || null,
+      longitude: tripData.coordinates?.lng || null,
+      country: tripData.country || null,
+      country_code: tripData.countryCode || null,
+      cover_image: tripData.cover_image || null,
+      cover_image_path: tripData.cover_image_path || null,
+      gallery_images: tripData.gallery_images || []
+    });
+    return response.data;
+  },
+  updateTrip: async (id, tripData) => {
+    const response = await api.put(`/trips/${id}`, {
+      ...tripData,
+      latitude: tripData.coordinates?.lat || null,
+      longitude: tripData.coordinates?.lng || null,
+      country: tripData.country || null,
+      country_code: tripData.countryCode || null,
+      cover_image: tripData.cover_image || null,
+      cover_image_path: tripData.cover_image_path || null,
+      gallery_images: tripData.gallery_images || []
+    });
+    return response.data;
+  },
   deleteTrip: (id) => api.delete(`/trips/${id}`),
   likeTrip: (id) => api.post(`/trips/${id}/like`),
   unlikeTrip: (id) => api.delete(`/trips/${id}/like`),
@@ -47,32 +71,3 @@ export const commentAPI = {
 };
 
 export default api;
-
-// Update the createTrip and updateTrip functions to handle coordinates
-// Update the createTrip function at the bottom of the file
-// Update the createTrip and updateTrip functions to handle cover images
-const createTrip = async (tripData) => {
-  const response = await api.post('/trips', {
-    ...tripData,
-    latitude: tripData.coordinates?.lat || null,
-    longitude: tripData.coordinates?.lng || null,
-    country: tripData.country || null,
-    country_code: tripData.countryCode || null,
-    cover_image: tripData.cover_image || null,
-    cover_image_path: tripData.cover_image_path || null
-  });
-  return response.data;
-};
-
-const updateTrip = async (id, tripData) => {
-  const response = await api.put(`/trips/${id}`, {
-    ...tripData,
-    latitude: tripData.coordinates?.lat || null,
-    longitude: tripData.coordinates?.lng || null,
-    country: tripData.country || null,
-    country_code: tripData.countryCode || null,
-    cover_image: tripData.cover_image || null,
-    cover_image_path: tripData.cover_image_path || null
-  });
-  return response.data;
-};
