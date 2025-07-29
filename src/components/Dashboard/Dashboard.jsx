@@ -166,6 +166,27 @@ const Dashboard = () => {
     fetchDashboardData();
   };
 
+  // Add function to calculate countries visited from completed and ongoing trips only
+  const getCountriesVisited = () => {
+    const groupedTrips = getGroupedTrips();
+    
+    // Only count completed and ongoing trips
+    const relevantTrips = [
+      ...groupedTrips.completed,
+      ...groupedTrips.ongoing
+    ];
+    
+    // Extract unique countries from relevant trips
+    const countries = new Set();
+    relevantTrips.forEach(trip => {
+      if (trip.country) {
+        countries.add(trip.country);
+      }
+    });
+    
+    return countries.size;
+  };
+
   if (loading) {
     return (
       <Container
@@ -212,7 +233,7 @@ const Dashboard = () => {
               <Card className="text-center">
                 <Card.Body>
                   <h3 className="text-success">
-                    {stats.countries_visited || 0}
+                    {getCountriesVisited()}
                   </h3>
                   <p className="mb-0">Countries Visited</p>
                 </Card.Body>
