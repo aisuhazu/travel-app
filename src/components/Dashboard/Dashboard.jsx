@@ -45,6 +45,24 @@ const Dashboard = () => {
     }
   };
 
+  // Add function to calculate countries visited from ongoing and completed trips only
+  const calculateCountriesVisited = () => {
+    const groupedTrips = getGroupedTrips();
+    const ongoingAndCompletedTrips = [
+      ...groupedTrips.ongoing,
+      ...groupedTrips.completed
+    ];
+    
+    const uniqueCountries = new Set();
+    ongoingAndCompletedTrips.forEach(trip => {
+      if (trip.country) {
+        uniqueCountries.add(trip.country);
+      }
+    });
+    
+    return uniqueCountries.size;
+  };
+
   // Add function to group and sort trips
   // Update the getGroupedTrips function with smart date-based status detection
   const getGroupedTrips = () => {
@@ -62,7 +80,7 @@ const Dashboard = () => {
     const sortByDate = (a, b) => {
       const dateA = new Date(a.start_date || a.created_at);
       const dateB = new Date(b.start_date || b.created_at);
-      return dateA - dateB; // FIXED: Earliest date first (chronological order)
+      return dateA - dateB; // Ascending order: earliest date first
     };
 
     // Smart status detection based on dates
@@ -166,27 +184,6 @@ const Dashboard = () => {
     fetchDashboardData();
   };
 
-  // Add function to calculate countries visited from completed and ongoing trips only
-  const getCountriesVisited = () => {
-    const groupedTrips = getGroupedTrips();
-    
-    // Only count completed and ongoing trips
-    const relevantTrips = [
-      ...groupedTrips.completed,
-      ...groupedTrips.ongoing
-    ];
-    
-    // Extract unique countries from relevant trips
-    const countries = new Set();
-    relevantTrips.forEach(trip => {
-      if (trip.country) {
-        countries.add(trip.country);
-      }
-    });
-    
-    return countries.size;
-  };
-
   if (loading) {
     return (
       <Container
@@ -233,7 +230,7 @@ const Dashboard = () => {
               <Card className="text-center">
                 <Card.Body>
                   <h3 className="text-success">
-                    {getCountriesVisited()}
+                    {calculateCountriesVisited()}
                   </h3>
                   <p className="mb-0">Countries Visited</p>
                 </Card.Body>
