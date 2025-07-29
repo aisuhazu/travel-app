@@ -14,6 +14,40 @@ const getResponsiveMapHeight = () => {
   return "400px"; // Default fallback
 };
 
+// Function to get pin color based on trip status
+const getPinColor = (status) => {
+  const statusColors = {
+    planned: "#0d6efd",    // Bootstrap primary (blue)
+    ongoing: "#198754",    // Bootstrap success (green)
+    completed: "#6c757d",  // Bootstrap secondary (gray)
+  };
+  return statusColors[status] || statusColors.planned;
+};
+
+// Function to determine trip status based on dates
+const getTripStatus = (trip) => {
+  if (trip.status) {
+    return trip.status;
+  }
+  
+  // Fallback logic based on dates if status is not set
+  const today = new Date();
+  const startDate = trip.start_date ? new Date(trip.start_date) : null;
+  const endDate = trip.end_date ? new Date(trip.end_date) : null;
+  
+  if (startDate && endDate) {
+    if (today < startDate) {
+      return 'planned';
+    } else if (today >= startDate && today <= endDate) {
+      return 'ongoing';
+    } else {
+      return 'completed';
+    }
+  }
+  
+  return 'planned'; // Default fallback
+};
+
 const containerStyle = {
   width: "100%",
   height: getResponsiveMapHeight(),
@@ -55,21 +89,24 @@ const MapView = ({
             }
           });
 
-          // Create new advanced markers
+          // Create new advanced markers with status-based colors
           const newMarkers = trips
             .filter((trip) => trip.coordinates)
             .map((trip) => {
+              const tripStatus = getTripStatus(trip);
+              const pinColor = getPinColor(tripStatus);
+              
               const pinElement = new PinElement({
-                background:
-                  selectedTrip?.id === trip.id ? "#dc3545" : "#0d6efd",
+                background: selectedTrip?.id === trip.id ? "#dc3545" : pinColor,
                 borderColor: "#ffffff",
                 glyphColor: "#ffffff",
+                scale: selectedTrip?.id === trip.id ? 1.2 : 1.0, // Make selected trip slightly larger
               });
 
               return new AdvancedMarkerElement({
                 map,
                 position: trip.coordinates,
-                title: trip.title,
+                title: `${trip.title} (${tripStatus})`,
                 content: pinElement.element,
               });
             });

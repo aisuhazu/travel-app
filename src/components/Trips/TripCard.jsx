@@ -8,6 +8,7 @@ const TripCard = ({ trip, onEdit, onRefresh }) => {
   const [loading, setLoading] = useState(false);
   const [showLightbox, setShowLightbox] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this trip?")) {
@@ -45,6 +46,10 @@ const TripCard = ({ trip, onEdit, onRefresh }) => {
       case 'planned': return 'primary';
       default: return 'secondary';
     }
+  };
+
+  const toggleDescription = () => {
+    setIsDescriptionExpanded(!isDescriptionExpanded);
   };
 
   const galleryImages = trip.gallery_images || [];
@@ -155,12 +160,24 @@ const TripCard = ({ trip, onEdit, onRefresh }) => {
           </div>
 
           {trip.description && (
-            <Card.Text className="text-muted small mb-3">
-              {trip.description.length > 100 
-                ? `${trip.description.substring(0, 100)}...` 
-                : trip.description
-              }
-            </Card.Text>
+            <div className="mb-3">
+              <Card.Text className="text-muted small mb-1">
+                {isDescriptionExpanded || trip.description.length <= 100
+                  ? trip.description
+                  : `${trip.description.substring(0, 100)}...`
+                }
+              </Card.Text>
+              {trip.description.length > 100 && (
+                <Button
+                  variant="link"
+                  size="sm"
+                  className="p-0 text-decoration-none small"
+                  onClick={toggleDescription}
+                >
+                  {isDescriptionExpanded ? 'See less' : 'See more'}
+                </Button>
+              )}
+            </div>
           )}
 
           {/* Gallery Preview */}
